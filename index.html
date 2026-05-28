@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Angkan Purkayestha Kabyo — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --navy:     #171e19;
+  --sage:     #b7c6c2;
+  --white:    #ffffff;
+  --taupe:    #9f8d8b;
+  --beige:    #d7c5b2;
+  --cyan:     #d5f4f9;
+  --softblue: #bbe2f5;
+  --charcoal: #302b2f;
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--navy); color: var(--white);
+  cursor: crosshair; overflow-x: hidden;
+}
+a { cursor: crosshair; }
+
+/* ─── SECTION TRANSITIONS ───────────────────────────────── */
+.page-section { display: none; }
+.page-section.active {
+  display: block;
+  animation: sectionIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes sectionIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  mix-blend-mode: difference; padding: 0 48px; height: 72px;
+  display: flex; align-items: center;
+  transform: translateY(0);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.nav.hidden { transform: translateY(-100%); }
+.nav-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; position: relative; }
+.nav-logo {
+  font-family: 'Anton', sans-serif; font-size: 24px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--white); text-decoration: none;
+}
+.nav[data-active="home"] .nav-logo { visibility: hidden; pointer-events: none; }
+.nav-links { display: flex; gap: 40px; list-style: none; position: absolute; left: 58%; transform: translateX(-50%); }
+.nav-btn {
+  font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--white); text-decoration: none; opacity: 0.6;
+  transition: opacity 0.3s; background: none; border: none;
+  font-family: inherit; cursor: crosshair; padding: 0;
+}
+.nav-btn:hover, .nav-btn.active { opacity: 1; }
+.nav-cta {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--white); background: none; font-family: inherit;
+  border: 1px solid var(--white); padding: 10px 20px; cursor: crosshair;
+  transition: background 0.5s cubic-bezier(0.16,1,0.3,1),
+              color      0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-cta:hover { background: var(--white); color: var(--navy); }
+
+/* ─── SHARED: AMBIENT BLURS ──────────────────────────────── */
+.amb {
+  position: absolute; border-radius: 50%;
+  filter: blur(120px); pointer-events: none; z-index: 0;
+}
+
+/* ─── SHARED: SECTION TYPOGRAPHY ────────────────────────── */
+.sec-label {
+  font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--taupe); margin-bottom: 12px;
+}
+.sec-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(40px, 5.5vw, 80px);
+  text-transform: uppercase; letter-spacing: -0.01em;
+  line-height: 0.95; margin-bottom: 52px;
+}
+
+/* ─── SHARED: PAGE HERO (profile / contact) ──────────────── */
+.page-hero {
+  min-height: 58vh; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 0 48px 80px;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid rgba(183,198,194,0.15);
+}
+.page-eyebrow {
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--sage); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.page-eyebrow::before {
+  content: ''; width: 40px; height: 1px; background: var(--sage); display: inline-block;
+}
+.page-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(48px, 9vw, 140px);
+  text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.88;
+}
+.page-title .outline { color: transparent; -webkit-text-stroke: 1px var(--sage); }
+
+/* ─── SHARED: DIVIDER ───────────────────────────────────── */
+.divider { height: 1px; background: rgba(183,198,194,0.15); }
+
+/* ─── SHARED: SCROLL REVEAL ─────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 1000ms cubic-bezier(0.16,1,0.3,1),
+              transform  1000ms cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── SHARED: FOOTER ─────────────────────────────────────── */
+.footer {
+  padding: 60px 48px; border-top: 1px solid rgba(183,198,194,0.15);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-logo {
+  font-family: 'Anton', sans-serif; font-size: 20px;
+  letter-spacing: 0.15em; color: var(--sage);
+}
+.footer-nav { display: flex; gap: 32px; }
+.footer-btn {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--taupe); background: none; border: none; font-family: inherit;
+  cursor: crosshair; transition: color 0.3s; padding: 0;
+}
+.footer-btn:hover { color: var(--sage); }
+.footer-copy { font-size: 12px; color: var(--taupe); }
+
+/* ═══════════════════════════════════════════════════════════
+   HOME
+   ═══════════════════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 0 48px 90px;
+  position: relative; overflow: hidden;
+}
+.hero .a1 { width:700px; height:700px; background:rgba(183,198,194,0.07); top:-120px; right:-80px; }
+.hero .a2 { width:450px; height:450px; background:rgba(213,244,249,0.05); bottom:80px; left:180px; }
+.hero .a3 { width:320px; height:320px; background:rgba(187,226,245,0.04); top:220px; left:-60px; }
+
+.hero-inner { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--sage); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 14px;
+}
+.hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--sage); display: inline-block; }
+
+.hero-name {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(48px, 9vw, 140px);
+  line-height: 0.88; text-transform: uppercase;
+  letter-spacing: -0.02em; margin-bottom: 48px;
+}
+.hero-name span { display: block; }
+.hero-name .outline { color: transparent; -webkit-text-stroke: 1px var(--sage); }
+
+.hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.hero-desc { max-width: 400px; font-size: 15px; font-weight: 300; line-height: 1.75; color: var(--sage); }
+.hero-meta { text-align: right; }
+.hero-meta-item { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); margin-bottom: 5px; }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 12px; margin-top: 24px;
+  font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cyan); background: none; border: none; font-family: inherit;
+  cursor: crosshair; padding: 0;
+  transition: gap 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.hero-cta:hover { gap: 22px; }
+.hero-cta::after { content: '→'; font-size: 18px; }
+
+.scroll-hint {
+  position: absolute; bottom: 32px; right: 48px;
+  writing-mode: vertical-rl; font-size: 11px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--taupe); display: flex; align-items: center; gap: 10px;
+}
+.scroll-hint::after { content: ''; display: block; width: 1px; height: 60px; background: var(--taupe); }
+
+/* Stats */
+.stats {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid rgba(183,198,194,0.15);
+}
+.stat { padding: 48px 36px; border-right: 1px solid rgba(183,198,194,0.15); }
+.stat:last-child { border-right: none; }
+.stat-num { font-family: 'Anton', sans-serif; font-size: 68px; color: var(--white); line-height: 1; margin-bottom: 8px; }
+.stat-lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--taupe); }
+
+/* Research interests */
+.interests { padding: 88px 48px; background: var(--charcoal); }
+.tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.tag {
+  font-size: 14px; font-weight: 300; letter-spacing: 0.04em;
+  padding: 13px 28px; border: 1px solid rgba(183,198,194,0.25);
+  color: var(--sage); cursor: crosshair;
+  transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.tag:hover { background: var(--sage); color: var(--navy); border-color: var(--sage); }
+
+/* Highlight cards */
+.highlights { display: grid; grid-template-columns: 1fr 1fr; }
+.hl-card {
+  padding: 52px 44px; border: 1px solid rgba(183,198,194,0.1);
+  position: relative; overflow: hidden;
+  transition: border-color 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.hl-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(183,198,194,0.03); opacity: 0; transition: opacity 0.5s;
+}
+.hl-card:hover { border-color: rgba(183,198,194,0.3); }
+.hl-card:hover::before { opacity: 1; }
+.hl-num { font-family: 'Anton', sans-serif; font-size: 100px; color: rgba(183,198,194,0.05); line-height: 1; margin-bottom: -16px; }
+.hl-title { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 14px; }
+.hl-desc { font-size: 13.5px; font-weight: 300; line-height: 1.75; color: var(--taupe); }
+.hl-badge {
+  display: inline-block; margin-top: 22px;
+  font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--cyan); padding: 5px 12px; border: 1px solid rgba(213,244,249,0.3);
+}
+
+/* Merit banner */
+.merit-banner {
+  padding: 88px 48px; background: var(--sage);
+  display: flex; align-items: center; gap: 64px;
+}
+.merit-big {
+  font-family: 'Anton', sans-serif; font-size: clamp(56px, 8vw, 120px);
+  color: var(--navy); text-transform: uppercase;
+  line-height: 0.92; letter-spacing: -0.02em; flex-shrink: 0;
+}
+.merit-lbl { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--taupe); margin-bottom: 14px; }
+.merit-text { font-size: 22px; font-weight: 300; color: var(--navy); line-height: 1.5; }
+.merit-sub { font-size: 13px; color: var(--charcoal); margin-top: 14px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE
+   ═══════════════════════════════════════════════════════════ */
+#profile .page-hero .a1 { width:500px; height:500px; background:rgba(183,198,194,0.06); top:-80px; right:0; }
+#profile .page-hero .a2 { width:300px; height:300px; background:rgba(213,244,249,0.05); bottom:40px; left:300px; }
+
+.psec       { padding: 88px 48px; }
+.psec-dark  { background: var(--charcoal); }
+
+/* Education */
+.edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.edu-card {
+  padding: 40px 36px; border: 1px solid rgba(183,198,194,0.12);
+  transition: border-color 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.edu-card:hover { border-color: rgba(183,198,194,0.35); }
+.edu-deg   { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.edu-inst  { font-size: 13px; font-weight: 300; color: var(--sage); margin-bottom: 4px; }
+.edu-period{ font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); margin-bottom: 16px; }
+.edu-gpa   { font-family: 'Anton', sans-serif; font-size: 36px; color: var(--cyan); line-height: 1; }
+.edu-gpa-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); margin-top: 4px; }
+.gpa-row   { display: flex; gap: 12px; margin-top: 16px; }
+.gpa-chip  { flex: 1; text-align: center; padding: 10px 4px; border: 1px solid rgba(183,198,194,0.2); border-radius: 2px; }
+.gpa-chip-val { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--white); }
+.gpa-chip-lbl { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); margin-top: 2px; }
+.edu-subgpa { font-family: 'Anton', sans-serif; font-size: 28px; color: var(--softblue); margin-bottom: 4px; }
+
+/* Experience & work */
+.exp-block {
+  margin-bottom: 40px; padding-bottom: 40px;
+  border-bottom: 1px solid rgba(183,198,194,0.12);
+}
+.exp-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.exp-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 8px; }
+.exp-title  { font-size: 17px; font-weight: 600; color: var(--white); flex: 1; }
+.exp-period { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); white-space: nowrap; flex-shrink: 0; padding-top: 3px; }
+.exp-sub    { font-size: 12.5px; color: var(--sage); font-style: italic; margin-bottom: 14px; }
+.exp-bullets{ font-size: 13.5px; font-weight: 300; line-height: 1.75; color: var(--taupe); padding-left: 16px; }
+.exp-bullets li { margin-bottom: 4px; }
+.exp-bullets em { color: var(--softblue); font-style: normal; }
+.tag-inline {
+  display: inline-block; font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 10px;
+  border: 1px solid rgba(213,244,249,0.35); color: var(--cyan); margin-top: 14px;
+}
+
+/* Publications */
+.pub-card {
+  padding: 32px 36px; margin-bottom: 16px;
+  border-left: 2px solid var(--sage);
+  background: rgba(183,198,194,0.04); transition: background 0.4s;
+}
+.pub-card:hover { background: rgba(183,198,194,0.08); }
+.pub-authors  { font-size: 13px; color: var(--white); margin-bottom: 8px; line-height: 1.6; }
+.pub-authors b{ color: var(--cyan); }
+.pub-venue    { font-size: 12px; color: var(--taupe); font-style: italic; margin-top: 6px; }
+.pub-status {
+  display: inline-block; font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 10px; margin-top: 12px;
+  border: 1px solid rgba(183,198,194,0.25); color: var(--sage);
+}
+
+/* Skills */
+.skills-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.skill-group { padding: 36px 32px; border: 1px solid rgba(183,198,194,0.12); }
+.skill-group-wide { grid-column: span 2; }
+.skill-cat  { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--taupe); margin-bottom: 16px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.s-pill {
+  font-size: 12px; font-weight: 300; padding: 6px 14px;
+  background: rgba(183,198,194,0.08); border: 1px solid rgba(183,198,194,0.18); color: var(--sage);
+}
+.s-pill-g {
+  font-size: 12px; font-weight: 300; padding: 6px 14px;
+  background: rgba(213,244,249,0.07); border: 1px solid rgba(213,244,249,0.2); color: var(--softblue);
+}
+
+/* Awards (profile) */
+.award-list { display: flex; flex-direction: column; gap: 2px; }
+.award-item {
+  display: grid; grid-template-columns: 80px 1fr auto;
+  align-items: start; gap: 32px; padding: 28px 32px;
+  border: 1px solid rgba(183,198,194,0.12); transition: background 0.4s;
+}
+.award-item:hover { background: rgba(183,198,194,0.04); }
+.award-yr   { font-family: 'Anton', sans-serif; font-size: 28px; color: rgba(183,198,194,0.35); line-height: 1; padding-top: 2px; }
+.award-name { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.award-body { font-size: 13px; font-weight: 300; color: var(--taupe); line-height: 1.6; }
+.award-tag  { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; white-space: nowrap; border: 1px solid rgba(213,244,249,0.3); color: var(--cyan); }
+
+/* Memberships */
+.mem-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.mem-card {
+  padding: 40px 32px; border: 1px solid rgba(183,198,194,0.12);
+  transition: border-color 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.mem-card:hover { border-color: rgba(183,198,194,0.35); }
+.mem-org  { font-family: 'Anton', sans-serif; font-size: 36px; color: var(--sage); letter-spacing: 0.05em; margin-bottom: 12px; }
+.mem-full { font-size: 13px; font-weight: 300; color: var(--taupe); line-height: 1.6; margin-bottom: 14px; }
+.mem-role { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--softblue); }
+
+/* Leadership */
+.lead-list { display: flex; flex-direction: column; gap: 2px; }
+.lead-item {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+  padding: 28px 32px; border: 1px solid rgba(183,198,194,0.12); transition: background 0.4s;
+}
+.lead-item:hover { background: rgba(183,198,194,0.04); }
+.lead-role   { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 5px; }
+.lead-org    { font-size: 13px; color: var(--sage); margin-bottom: 8px; }
+.lead-desc   { font-size: 13px; font-weight: 300; color: var(--taupe); line-height: 1.65; }
+.lead-period { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe); white-space: nowrap; flex-shrink: 0; padding-top: 3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════ */
+#contact .page-hero .a1 { width:600px; height:600px; background:rgba(183,198,194,0.07); top:-100px; right:-100px; }
+#contact .page-hero .a2 { width:350px; height:350px; background:rgba(213,244,249,0.05); bottom:60px; left:250px; }
+#contact .page-hero .a3 { width:280px; height:280px; background:rgba(187,226,245,0.04); top:180px; left:-40px; }
+
+.hero-sub { font-size: 16px; font-weight: 300; color: var(--sage); max-width: 480px; line-height: 1.7; margin-top: 32px; }
+
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 60vh; }
+
+.c-info {
+  padding: 80px 56px; background: var(--charcoal);
+  border-right: 1px solid rgba(183,198,194,0.15);
+  display: flex; flex-direction: column; gap: 48px;
+}
+.c-info-lbl { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--taupe); margin-bottom: 28px; }
+.c-items    { display: flex; flex-direction: column; gap: 20px; }
+.c-item     { display: flex; align-items: flex-start; gap: 18px; }
+.c-icon {
+  width: 40px; height: 40px; border: 1px solid rgba(183,198,194,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.c-icon svg { width: 16px; height: 16px; stroke: var(--sage); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.c-item-lbl { font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--taupe); margin-bottom: 4px; }
+.c-item-val { font-size: 14px; font-weight: 300; color: var(--white); line-height: 1.5; }
+.c-item-val a { color: var(--softblue); text-decoration: none; transition: color 0.3s; }
+.c-item-val a:hover { color: var(--cyan); }
+
+.avail {
+  padding: 24px 28px; border: 1px solid rgba(183,198,194,0.15);
+}
+.avail-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+  display: inline-block; margin-right: 10px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes spin  { to { transform: rotate(360deg); } }
+.avail-text { font-size: 13px; font-weight: 300; color: var(--sage); }
+.avail-note { font-size: 12px; color: var(--taupe); margin-top: 8px; line-height: 1.6; }
+
+.c-form-wrap { padding: 80px 56px; background: var(--navy); }
+.form-top-lbl { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--taupe); margin-bottom: 36px; }
+.cform    { display: flex; flex-direction: column; gap: 20px; }
+.f-group  { display: flex; flex-direction: column; gap: 8px; }
+.f-row    { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.f-lbl    { font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--taupe); }
+.f-input, .f-textarea, .f-select {
+  background: transparent; border: 1px solid rgba(183,198,194,0.2);
+  color: var(--white); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 300; padding: 14px 16px;
+  outline: none; cursor: crosshair;
+  transition: border-color 0.4s cubic-bezier(0.16,1,0.3,1);
+  -webkit-appearance: none; appearance: none;
+}
+.f-input::placeholder, .f-textarea::placeholder { color: rgba(183,198,194,0.3); }
+.f-input:focus, .f-textarea:focus, .f-select:focus { border-color: rgba(213,244,249,0.6); }
+.f-textarea { resize: vertical; min-height: 140px; }
+.f-select option { background: var(--charcoal); color: var(--white); }
+.f-submit {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px; background: var(--sage); color: var(--navy);
+  border: none; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: crosshair; margin-top: 8px;
+  transition: background 0.5s cubic-bezier(0.16,1,0.3,1),
+              transform  0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.f-submit:hover { background: var(--cyan); transform: translateY(-2px); }
+.f-submit-arr { font-size: 20px; }
+.f-note { font-size: 12px; font-weight: 300; color: var(--taupe); line-height: 1.6; margin-top: 12px; }
+
+.references  { padding: 88px 48px; background: var(--charcoal); }
+.ref-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.ref-card    { padding: 44px 40px; border: 1px solid rgba(183,198,194,0.12); transition: border-color 0.5s cubic-bezier(0.16,1,0.3,1); }
+.ref-card:hover { border-color: rgba(183,198,194,0.35); }
+.ref-name    { font-family: 'Anton', sans-serif; font-size: 28px; color: var(--white); letter-spacing: -0.01em; margin-bottom: 12px; }
+.ref-title   { font-size: 13px; font-weight: 300; color: var(--sage); margin-bottom: 4px; }
+.ref-inst    { font-size: 12.5px; color: var(--taupe); margin-bottom: 20px; line-height: 1.5; }
+.ref-email   { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--softblue); text-decoration: none; border-bottom: 1px solid rgba(187,226,245,0.3); padding-bottom: 3px; transition: color 0.3s, border-color 0.3s; }
+.ref-email:hover { color: var(--cyan); border-color: var(--cyan); }
+.ref-email svg { width:14px; height:14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.loc-strip  { padding: 72px 48px; background: var(--sage); display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.loc-big    { font-family: 'Anton', sans-serif; font-size: clamp(52px,7vw,110px); color: var(--navy); text-transform: uppercase; line-height: 0.92; letter-spacing: -0.02em; flex-shrink: 0; }
+.loc-lbl    { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--taupe); margin-bottom: 12px; }
+.loc-text   { font-size: 18px; font-weight: 300; color: var(--navy); line-height: 1.6; }
+.loc-coords { font-size: 12px; letter-spacing: 0.1em; color: var(--charcoal); margin-top: 12px; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  /* nav */
+  .nav { padding: 0 24px; height: 60px; }
+  .nav-links { gap: 20px; }
+
+  /* home */
+  .hero { padding: 0 24px 70px; }
+  .hero-bottom { flex-direction: column; align-items: flex-start; }
+  .hero-meta { text-align: left; }
+  .scroll-hint { display: none; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat { border-right: none; border-bottom: 1px solid rgba(183,198,194,0.15); }
+  .stat:nth-child(odd) { border-right: 1px solid rgba(183,198,194,0.15); }
+  .interests { padding: 60px 24px; }
+  .highlights { grid-template-columns: 1fr; }
+  .merit-banner { flex-direction: column; gap: 28px; padding: 60px 24px; }
+
+  /* profile */
+  .page-hero { padding: 0 24px 60px; }
+  .psec { padding: 60px 24px; }
+  .edu-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .skill-group-wide { grid-column: span 1; }
+  .award-item { grid-template-columns: 1fr; gap: 12px; }
+  .mem-grid { grid-template-columns: 1fr; }
+  .lead-item { flex-direction: column; }
+
+  /* contact */
+  .contact-grid { grid-template-columns: 1fr; }
+  .c-info { padding: 60px 24px; border-right: none; border-bottom: 1px solid rgba(183,198,194,0.15); }
+  .c-form-wrap { padding: 60px 24px; }
+  .f-row { grid-template-columns: 1fr; }
+  .references { padding: 60px 24px; }
+  .ref-grid { grid-template-columns: 1fr; }
+  .loc-strip { flex-direction: column; align-items: flex-start; padding: 60px 24px; }
+
+  /* footer */
+  .footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
+  .footer-nav { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .hero-name { font-size: clamp(36px, 10vw, 80px); }
+  .nav-links { left: 55%; }
+  .nav-cta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     NAVIGATION (fixed, shared across all)
+     ════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="nav-logo nav-btn" data-section="home">APK</button>
+    <ul class="nav-links">
+      <li><button class="nav-btn active" data-section="home">Home</button></li>
+      <li><button class="nav-btn"        data-section="profile">Profile</button></li>
+      <li><button class="nav-btn"        data-section="contact">Contact</button></li>
+    </ul>
+    <button class="nav-cta" data-section="contact">Get in Touch</button>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════
+     HOME
+     ════════════════════════════════════════ -->
+<div id="home" class="page-section active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="amb a1"></div>
+    <div class="amb a2"></div>
+    <div class="amb a3"></div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow">B.Sc. Chemistry &nbsp;·&nbsp; University of Dhaka</p>
+      <h1 class="hero-name">
+        <span>Angkan</span>
+        <span>Purkayestha</span>
+        <span class="outline">Kabyo</span>
+      </h1>
+      <div class="hero-bottom">
+        <p class="hero-desc">
+          Chemist and researcher at the intersection of environmental chemistry,
+          computational methods, and analytical science. Pushing the frontier
+          from Dhaka, Bangladesh.
+        </p>
+        <div class="hero-meta">
+          <button class="hero-cta" data-section="profile">Explore Profile</button>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat reveal">
+      <div class="stat-num">3.79</div>
+      <div class="stat-lbl">CGPA / 4.00</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">2</div>
+      <div class="stat-lbl">Publications &amp; Presentations</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">3</div>
+      <div class="stat-lbl">Professional Memberships</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">#1</div>
+      <div class="stat-lbl">1st Year Department Rank</div>
+    </div>
+  </section>
+
+  <!-- Research Interests -->
+  <section class="interests">
+    <div class="reveal">
+      <p class="sec-label">Focus Areas</p>
+      <h2 class="sec-title">Research<br/>Interests</h2>
+    </div>
+    <div class="tags reveal">
+      <span class="tag">Environmental Chemistry</span>
+      <span class="tag">Computational Chemistry</span>
+      <span class="tag">Electrochemistry</span>
+      <span class="tag">Electrocatalysis</span>
+      <span class="tag">Photocatalysis</span>
+      <span class="tag">Analytical Chemistry</span>
+    </div>
+  </section>
+
+  <!-- Highlights -->
+  <section class="highlights">
+    <div class="hl-card reveal">
+      <div class="hl-num">01</div>
+      <h3 class="hl-title">FTIR-Based Bisphenol Analysis</h3>
+      <p class="hl-desc">
+        Developing a low-cost, reliable FTIR spectroscopic protocol to detect and quantify
+        bisphenol contamination in plastic consumer products. Supervised by Prof. Dr. Md. Ahsan Habib.
+      </p>
+      <span class="hl-badge">Active Research · 2025–Present</span>
+    </div>
+    <div class="hl-card reveal">
+      <div class="hl-num">02</div>
+      <h3 class="hl-title">Surma River Pollution Study</h3>
+      <p class="hl-desc">
+        Multi-stressor environmental analysis of Sylhet's Surma River using the DPSIR framework,
+        proposing a staged engineering control framework. Submitted to the 8th ICChE, BUET.
+      </p>
+      <span class="hl-badge">Submitted Paper</span>
+    </div>
+    <div class="hl-card reveal">
+      <div class="hl-num">03</div>
+      <h3 class="hl-title">Metal Nanoclusters Research</h3>
+      <p class="hl-desc">
+        Poster on ligand-directed atomic precision synthesis in metal nanoclusters for enhanced
+        catalytic and photoluminescent performance. Presented at CARSI, 2025.
+      </p>
+      <span class="hl-badge">Poster Presented · 2025</span>
+    </div>
+    <div class="hl-card reveal">
+      <div class="hl-num">04</div>
+      <h3 class="hl-title">International Chemistry Finalist</h3>
+      <p class="hl-desc">
+        Selected as a finalist in the Edu.Harbour International Chemistry Competition,
+        advancing through a national pool of participants. Final round on 7 June 2026.
+      </p>
+      <span class="hl-badge">Upcoming · June 2026</span>
+    </div>
+  </section>
+
+  <!-- Merit Banner -->
+  <section class="merit-banner">
+    <div class="merit-big reveal">Merit<br/>Scholar</div>
+    <div class="reveal">
+      <p class="merit-lbl">Latest Achievement · 2026</p>
+      <p class="merit-text">Dhaka University Undergraduate<br/>Merit Scholarship</p>
+      <p class="merit-sub">
+        Awarded for outstanding academic performance across undergraduate study.
+        Includes full tuition waiver — University of Dhaka.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <nav class="footer-nav">
+      <button class="footer-btn" data-section="home">Home</button>
+      <button class="footer-btn" data-section="profile">Profile</button>
+      <button class="footer-btn" data-section="contact">Contact</button>
+    </nav>
+    <p class="footer-copy">© 2026 Angkan Purkayestha Kabyo</p>
+  </footer>
+
+</div><!-- /home -->
+
+
+
+<!-- ════════════════════════════════════════
+     PROFILE
+     ════════════════════════════════════════ -->
+<div id="profile" class="page-section">
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="amb a1"></div>
+    <div class="amb a2"></div>
+    <div style="position:relative;z-index:1;">
+      <p class="page-eyebrow">Researcher &nbsp;·&nbsp; Chemist &nbsp;·&nbsp; Educator</p>
+      <h1 class="page-title">Full<br/><span class="outline">Profile</span></h1>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="psec" id="education">
+    <div class="reveal">
+      <p class="sec-label">Academic Background</p>
+      <h2 class="sec-title">Education</h2>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <div class="edu-deg">B.Sc. in Chemistry</div>
+        <div class="edu-inst">University of Dhaka</div>
+        <div class="edu-period">2022 – Present &nbsp;·&nbsp; Final Year</div>
+        <div class="edu-gpa">3.79</div>
+        <div class="edu-gpa-lbl">Cumulative GPA / 4.00</div>
+        <div class="gpa-row">
+          <div class="gpa-chip"><div class="gpa-chip-val">3.80</div><div class="gpa-chip-lbl">Year 1</div></div>
+          <div class="gpa-chip"><div class="gpa-chip-val">3.74</div><div class="gpa-chip-lbl">Year 2</div></div>
+          <div class="gpa-chip"><div class="gpa-chip-val">3.84</div><div class="gpa-chip-lbl">Year 3</div></div>
+        </div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-deg">HSC — Higher Secondary Certificate</div>
+        <div class="edu-inst">Notre Dame College, Dhaka</div>
+        <div class="edu-period">2021</div>
+        <div class="edu-subgpa">5.00 / 5.00</div>
+        <div class="edu-gpa-lbl" style="margin-bottom:32px;">Perfect GPA</div>
+        <div class="edu-deg">SSC — Secondary School Certificate</div>
+        <div class="edu-inst">Jalalabad Cantonment Public School &amp; College, Sylhet</div>
+        <div class="edu-period">2019</div>
+        <div class="edu-subgpa">5.00 / 5.00</div>
+        <div class="edu-gpa-lbl">Perfect GPA</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Research Experience -->
+  <section class="psec psec-dark" id="research">
+    <div class="reveal">
+      <p class="sec-label">Academic Work</p>
+      <h2 class="sec-title">Research<br/>Experience</h2>
+    </div>
+    <div class="exp-block reveal">
+      <div class="exp-header">
+        <div class="exp-title">
+          Undergraduate Research Project
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(213,244,249,0.3);padding:3px 8px;margin-left:10px;">4th Year · 2 Credits</span>
+        </div>
+        <div class="exp-period">2025 – Present</div>
+      </div>
+      <div class="exp-sub">Supervisor: Dr. Md. Ahsan Habib, Professor, Dept. of Chemistry, University of Dhaka</div>
+      <ul class="exp-bullets">
+        <li><em>"Development of an FTIR-based Analytical Method for Qualitative and Quantitative Analysis of Bisphenol in Plastics"</em></li>
+        <li>Designing a low-cost, reliable FTIR spectroscopic protocol to detect and quantify bisphenol contamination in plastic consumer products</li>
+        <li>Responsibilities include sample preparation, spectral calibration curve development, and analytical method validation</li>
+      </ul>
+      <span class="tag-inline">Environmental Analytical Chemistry</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Publications -->
+  <section class="psec" id="publications">
+    <div class="reveal">
+      <p class="sec-label">Scholarly Output</p>
+      <h2 class="sec-title">Publications &amp;<br/>Presentations</h2>
+    </div>
+    <div class="pub-card reveal">
+      <div class="pub-authors">
+        <b>Angkan Purkayestha Kabyo</b> et al.
+        "Ligand-Directed Atomic Precision: Photochemical Assisted Synthesis in Metal Nanoclusters
+        for Enhanced Catalytic and Photoluminescent Performance."
+      </div>
+      <div class="pub-venue">Poster Presentation · Centre for Applied Research in Software and IT (CARSI), 2025.</div>
+      <span class="pub-status">Presented · 2025</span>
+    </div>
+    <div class="pub-card reveal">
+      <div class="pub-authors">
+        <b>Angkan Purkayestha Kabyo</b> et al.
+        "Surma River Pollution, Sylhet: A DPSIR-Based Multi-Stressor Analysis and
+        Staged Engineering Control Framework."
+      </div>
+      <div class="pub-venue">Review Article &amp; Abstract · 8th International Conference on Chemical Engineering (ICChE), BUET.</div>
+      <span class="pub-status">Submitted</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Work Experience -->
+  <section class="psec psec-dark" id="work">
+    <div class="reveal">
+      <p class="sec-label">Professional</p>
+      <h2 class="sec-title">Work<br/>Experience</h2>
+    </div>
+    <div class="exp-block reveal">
+      <div class="exp-header">
+        <div class="exp-title">Part-time Chemistry Instructor</div>
+        <div class="exp-period">2024 – Present</div>
+      </div>
+      <div class="exp-sub">UDVASH Academic &amp; Admission Care, Dhaka, Bangladesh</div>
+      <ul class="exp-bullets">
+        <li>Teaching admission-level chemistry to HSC students at one of Bangladesh's leading academic coaching institutions</li>
+        <li>Developing lecture materials, problem sets, and conducting regular performance assessments</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Skills -->
+  <section class="psec" id="skills">
+    <div class="reveal">
+      <p class="sec-label">Technical Arsenal</p>
+      <h2 class="sec-title">Skills &amp;<br/>Expertise</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <div class="skill-cat">Programming</div>
+        <div class="skill-tags">
+          <span class="s-pill">Python</span>
+          <span class="s-pill">C</span>
+          <span class="s-pill">C++</span>
+          <span class="s-pill">MATLAB</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-cat">Computational Tools</div>
+        <div class="skill-tags">
+          <span class="s-pill-g">DFT Analysis</span>
+          <span class="s-pill-g">Quantum ESPRESSO</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-cat">Software</div>
+        <div class="skill-tags">
+          <span class="s-pill">MS Word</span>
+          <span class="s-pill">MS Excel</span>
+          <span class="s-pill">LaTeX</span>
+        </div>
+      </div>
+      <div class="skill-group skill-group-wide reveal">
+        <div class="skill-cat">Instrumentation</div>
+        <div class="skill-tags">
+          <span class="s-pill-g">FTIR Spectroscopy</span>
+          <span class="s-pill-g">UV-Vis Spectrophotometry</span>
+          <span class="s-pill-g">Spectrofluorometry</span>
+          <span class="s-pill-g">Electrochemical Analysis</span>
+          <span class="s-pill-g">pH &amp; Conductometry</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-cat">Languages</div>
+        <div class="skill-tags">
+          <span class="s-pill">Bengali (Native)</span>
+          <span class="s-pill">English (Professional)</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:48px;" class="reveal">
+      <p class="sec-label" style="margin-bottom:16px;">Lab Techniques</p>
+      <p style="font-size:14px;font-weight:300;color:var(--taupe);line-height:2;max-width:700px;">
+        Volumetric &amp; gravimetric analysis &nbsp;·&nbsp;
+        Acid-base, redox &amp; complexometric titrations &nbsp;·&nbsp;
+        TLC &amp; column chromatography &nbsp;·&nbsp;
+        Recrystallisation &nbsp;·&nbsp;
+        Reflux &amp; distillation &nbsp;·&nbsp;
+        Organic synthesis &nbsp;·&nbsp;
+        Wet chemical analysis &nbsp;·&nbsp;
+        Qualitative inorganic analysis &nbsp;·&nbsp;
+        Solution preparation &amp; standardisation
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Awards -->
+  <section class="psec psec-dark" id="awards">
+    <div class="reveal">
+      <p class="sec-label">Recognition</p>
+      <h2 class="sec-title">Awards &amp;<br/>Achievements</h2>
+    </div>
+    <div class="award-list">
+      <div class="award-item reveal">
+        <div class="award-yr">2026</div>
+        <div>
+          <div class="award-name">Dhaka University Undergraduate Merit Scholarship</div>
+          <div class="award-body">Awarded for outstanding academic performance across undergraduate study. Includes full tuition waiver — University of Dhaka.</div>
+        </div>
+        <div class="award-tag">Merit Scholarship</div>
+      </div>
+      <div class="award-item reveal">
+        <div class="award-yr">2026</div>
+        <div>
+          <div class="award-name">Finalist — Edu.Harbour International Chemistry Competition</div>
+          <div class="award-body">Selected as a finalist out of national pool of participants. Final round on 7 June 2026.</div>
+        </div>
+        <div class="award-tag">Upcoming · June 2026</div>
+      </div>
+      <div class="award-item reveal">
+        <div class="award-yr">2023</div>
+        <div>
+          <div class="award-name">1st Position — B.Sc. Chemistry, 1st Year</div>
+          <div class="award-body">Department of Chemistry, University of Dhaka. Achieved GPA 3.80 / 4.00.</div>
+        </div>
+        <div class="award-tag">GPA 3.80</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Memberships -->
+  <section class="psec" id="memberships">
+    <div class="reveal">
+      <p class="sec-label">Professional Affiliations</p>
+      <h2 class="sec-title">Memberships</h2>
+    </div>
+    <div class="mem-grid">
+      <div class="mem-card reveal">
+        <div class="mem-org">RSC</div>
+        <div class="mem-full">Royal Society of Chemistry, United Kingdom</div>
+        <div class="mem-role">Student Member</div>
+      </div>
+      <div class="mem-card reveal">
+        <div class="mem-org">ACS</div>
+        <div class="mem-full">American Chemical Society</div>
+        <div class="mem-role">International Member</div>
+      </div>
+      <div class="mem-card reveal">
+        <div class="mem-org">MRS</div>
+        <div class="mem-full">Materials Research Society Student Chapter, University of Dhaka</div>
+        <div class="mem-role">Member</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Leadership -->
+  <section class="psec psec-dark" id="leadership">
+    <div class="reveal">
+      <p class="sec-label">Beyond the Lab</p>
+      <h2 class="sec-title">Leadership &amp;<br/>Activities</h2>
+    </div>
+    <div class="lead-list">
+      <div class="lead-item reveal">
+        <div>
+          <div class="lead-role">Co-Cultural Secretary</div>
+          <div class="lead-org">Catalyst — Jagannath Hall, University of Dhaka</div>
+          <div class="lead-desc">Co-organising cultural events and student engagement programmes at university hall level.</div>
+        </div>
+        <div class="lead-period">2023 – Present</div>
+      </div>
+      <div class="lead-item reveal">
+        <div>
+          <div class="lead-role">Co-Founder</div>
+          <div class="lead-org">Roar For Street Child (RSC) — Social Organisation</div>
+          <div class="lead-desc">Co-founded a volunteer-driven initiative focused on welfare and education of underprivileged street children.</div>
+        </div>
+        <div class="lead-period">2021 – 2022</div>
+      </div>
+      <div class="lead-item reveal">
+        <div>
+          <div class="lead-role">Member — Notre Dame Science Club</div>
+          <div class="lead-org">Notre Dame College, Dhaka</div>
+          <div class="lead-desc">Active participation in science outreach and competitions.</div>
+        </div>
+        <div class="lead-period">2019 – 2021</div>
+      </div>
+      <div class="lead-item reveal">
+        <div>
+          <div class="lead-role">Former Member — Dhaka University Career Club</div>
+          <div class="lead-org">University of Dhaka</div>
+          <div class="lead-desc">Engaged with career development workshops and professional networking activities.</div>
+        </div>
+        <div class="lead-period">2022 – 2023</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-logo">APK</div>
+    <nav class="footer-nav">
+      <button class="footer-btn" data-section="home">Home</button>
+      <button class="footer-btn" data-section="profile">Profile</button>
+      <button class="footer-btn" data-section="contact">Contact</button>
+    </nav>
+    <p class="footer-copy">© 2026 Angkan Purkayestha Kabyo</p>
+  </footer>
+
+</div><!-- /profile -->
+
+
+<!-- ════════════════════════════════════════
+     CONTACT
+     ════════════════════════════════════════ -->
+<div id="contact" class="page-section">
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="amb a1"></div>
+    <div class="amb a2"></div>
+    <div class="amb a3"></div>
+    <div style="position:relative;z-index:1;">
+      <p class="page-eyebrow">Open to Collaboration &nbsp;·&nbsp; Research &amp; Opportunities</p>
+      <h1 class="page-title">Let's<br/><span class="outline">Connect</span></h1>
+      <p class="hero-sub">
+        Whether you have a research opportunity, collaboration proposal,
+        or simply want to connect — I'd love to hear from you.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Grid -->
+  <div class="contact-grid">
+
+    <!-- Info -->
+    <div class="c-info">
+      <div class="reveal">
+        <p class="c-info-lbl">Reach Me Directly</p>
+        <div class="c-items">
+          <div class="c-item">
+            <div class="c-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+            </div>
+            <div>
+              <div class="c-item-lbl">Academic Email</div>
+              <div class="c-item-val">
+                <a href="mailto:angkanpurkayestha-2021311956@chem.du.ac.bd">
+                  angkanpurkayestha-2021311956<br/>@chem.du.ac.bd
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="c-item">
+            <div class="c-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><line x1="8" y1="11" x2="8" y2="16"/><line x1="8" y1="8" x2="8" y2="8.5"/><path d="M12 11v5M12 11c0-1.1.9-2 2-2h1a2 2 0 012 2v3"/></svg>
+            </div>
+            <div>
+              <div class="c-item-lbl">LinkedIn</div>
+              <div class="c-item-val">
+                <a href="https://www.linkedin.com/in/angkan-kabyo-01965b20b" target="_blank" rel="noopener noreferrer">
+                  linkedin.com/in/angkan-kabyo
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="c-item">
+            <div class="c-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            </div>
+            <div>
+              <div class="c-item-lbl">Location</div>
+              <div class="c-item-val">Dhaka, Bangladesh</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="avail reveal">
+        <p class="avail-text"><span class="avail-dot"></span>Available for Opportunities</p>
+        <p class="avail-note">
+          Open to graduate research positions, academic collaborations,
+          conference invitations, and professional projects.
+          Typically responds within 48 hours.
+        </p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="c-form-wrap reveal">
+      <p class="form-top-lbl">Send a Message</p>
+      <form class="cform" id="contactForm" novalidate>
+        <!-- Hidden routing fields for EmailJS template -->
+        <input type="hidden" name="to_name"  value="Angkan"/>
+        <input type="hidden" name="to_email" value="angkan.pur@gmail.com"/>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-lbl" for="fname">First Name</label>
+            <input class="f-input" type="text" id="fname" name="user_firstname" placeholder="John" required/>
+          </div>
+          <div class="f-group">
+            <label class="f-lbl" for="lname">Last Name</label>
+            <input class="f-input" type="text" id="lname" name="user_lastname" placeholder="Doe" required/>
+          </div>
+        </div>
+        <div class="f-group">
+          <label class="f-lbl" for="email">Email Address</label>
+          <input class="f-input" type="email" id="email" name="user_email" placeholder="john@example.com" required/>
+        </div>
+        <div class="f-group">
+          <label class="f-lbl" for="subject">Subject</label>
+          <select class="f-select" id="subject" name="user_subject">
+            <option value="" disabled selected>Select a topic</option>
+            <option>Research Collaboration</option>
+            <option>Graduate Program Inquiry</option>
+            <option>Teaching / Education</option>
+            <option>Conference / Event</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <label class="f-lbl" for="msg">Message</label>
+          <textarea class="f-textarea" id="msg" name="user_message" placeholder="Describe your proposal, question, or topic of interest…" required></textarea>
+        </div>
+        <button type="submit" class="f-submit">
+          <span>Send Message</span>
+          <span class="f-submit-arr">→</span>
+        </button>
+        <p class="f-note">Your message will be sent directly to the academic inbox. Response within 48 hours.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- References -->
+  <section class="references">
+    <div class="reveal">
+      <p class="sec-label">Academic References</p>
+      <h2 class="sec-title">References</h2>
+    </div>
+    <div class="ref-grid">
+      <div class="ref-card reveal">
+        <div class="ref-name">Dr. Md. Ahsan Habib</div>
+        <div class="ref-title">Professor</div>
+        <div class="ref-inst">Department of Chemistry<br/>University of Dhaka</div>
+        <a class="ref-email" href="mailto:habibchem@du.ac.bd">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+          habibchem@du.ac.bd
+        </a>
+      </div>
+      <div class="ref-card reveal">
+        <div class="ref-name">Dr. Saika Ahmed</div>
+        <div class="ref-title">Associate Professor</div>
+        <div class="ref-inst">Department of Chemistry<br/>University of Dhaka</div>
+        <a class="ref-email" href="mailto:saika@du.ac.bd">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+          saika@du.ac.bd
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location Strip -->
+  <section class="loc-strip">
+    <div class="loc-big reveal">Dhaka<br/>BD</div>
+    <div class="reveal">
+      <p class="loc-lbl">Based In</p>
+      <p class="loc-text">Dhaka, Bangladesh<br/>University of Dhaka Campus</p>
+      <p class="loc-coords">23.7281° N, 90.3733° E &nbsp;·&nbsp; GMT+6</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-logo">APK</div>
+    <nav class="footer-nav">
+      <button class="footer-btn" data-section="home">Home</button>
+      <button class="footer-btn" data-section="profile">Profile</button>
+      <button class="footer-btn" data-section="contact">Contact</button>
+    </nav>
+    <p class="footer-copy">© 2026 Angkan Purkayestha Kabyo</p>
+  </footer>
+
+</div><!-- /contact -->
+
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════════════ -->
+<script>
+(function () {
+  /* ── Section switching ── */
+  function showSection(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('[data-section]').forEach(el =>
+      el.classList.toggle('active', el.dataset.section === id)
+    );
+    document.querySelector('.nav').dataset.active = id;
+
+    const section = document.getElementById(id);
+    section.classList.add('active');
+    window.scrollTo(0, 0);
+
+    /* Trigger reveal for elements already in viewport after paint */
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        section.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+          const r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight + 80) el.classList.add('visible');
+        });
+      }, 80);
+    });
+  }
+
+  /* Wire all [data-section] buttons */
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-section]');
+    if (btn) {
+      e.preventDefault();
+      showSection(btn.dataset.section);
+    }
+  });
+
+  /* ── Scroll reveal (IntersectionObserver) ── */
+  const revealObs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.07 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  /* Initial in-viewport trigger for home section */
+  showSection('home');
+
+  /* ── Hide nav on scroll down, reveal on scroll up ── */
+  (function () {
+    const nav = document.querySelector('.nav');
+    let lastY = 0;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y <= 10) {
+        nav.classList.remove('hidden');   // always show at the very top
+      } else if (y > lastY) {
+        nav.classList.add('hidden');      // scrolling down → hide
+      } else {
+        nav.classList.remove('hidden');   // scrolling up  → show
+      }
+      lastY = y;
+    }, { passive: true });
+  })();
+
+  /* ── EmailJS config — replace these three values after setup ── */
+  const EJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // Account → API Keys
+  const EJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // Email Services → Service ID
+  const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // Email Templates → Template ID
+
+  emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+
+  /* ── Contact form → Gmail via EmailJS ── */
+  document.getElementById('contactForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    /* Basic client-side validation */
+    const required = this.querySelectorAll('[required]');
+    let valid = true;
+    required.forEach(el => { if (!el.value.trim()) { el.style.borderColor = '#ef4444'; valid = false; } else { el.style.borderColor = ''; } });
+    if (!valid) return;
+
+    const btn  = this.querySelector('.f-submit');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span>Sending…</span><span style="display:inline-block;animation:spin 1s linear infinite">⟳</span>';
+    btn.disabled  = true;
+
+    emailjs.sendForm(EJS_SERVICE_ID, EJS_TEMPLATE_ID, this)
+      .then(() => {
+        btn.innerHTML         = '<span>Message Sent!</span><span>✓</span>';
+        btn.style.background  = '#4ade80';
+        btn.style.color       = '#171e19';
+        this.reset();
+        setTimeout(() => {
+          btn.innerHTML        = orig;
+          btn.style.background = '';
+          btn.style.color      = '';
+          btn.disabled         = false;
+        }, 4000);
+      })
+      .catch(err => {
+        console.error('EmailJS error:', err);
+        btn.innerHTML         = '<span>Failed — try again</span><span>✗</span>';
+        btn.style.background  = '#ef4444';
+        btn.style.color       = '#fff';
+        setTimeout(() => {
+          btn.innerHTML        = orig;
+          btn.style.background = '';
+          btn.style.color      = '';
+          btn.disabled         = false;
+        }, 3500);
+      });
+  });
+})();
+</script>
+</body>
+</html>
